@@ -8,40 +8,31 @@ type UserType = {
     age: number
 }
 
-type UserPropsType = UserType & {
-    deleteUser: (id: number) => void
-}
-
-function User(props: UserPropsType) {
+function User(props: UserType) {
     return (
-        <li>
-            <button onClick={()=>props.deleteUser(props.id)}>x</button>
-            User {props.name}: {props.age} y.o.
-        </li>
+        <li>User {props.name}: {props.age} y.o.</li>
     )
 }
 
 function UsersList() {
-    const data: Array<UserType> = [
-        {id: 1, name: "Bob", age: 25},
-        {id: 2, name: "Alex", age: 28},
-        {id: 3, name: "Ann", age: 23},
-        {id: 4, name: "John", age: 30},
+    const state = [
+        {id: 1, name: "Bob", age: 34},
+        {id: 2, name: "Alex", age: 25},
+        {id: 3, name: "Ann", age: 30},
+        {id: 4, name: "John", age: 23},
     ]
-    const [users, setUsers] = useState<Array<UserType>>(data)
-    const deleteUser = (userID: number) => {
-        setUsers(users.filter(u => u.id !== userID))
-    }
+    const users = [
+        {id: 1, userName: "Bob", age: 34},
+        {id: 2, userName: "Alex", age: 25},
+        {id: 3, userName: "Ann", age: 30},
+        {id: 4, userName: "John", age: 23},
+    ]
+
+    const [usersList, setUsersList] = useState<Array<UserType>>(state)
     return (
         <main>
-            <h4>Users list:</h4>
-            <ul>
-                {users.map(u => <User
-                    key={u.id}
-                    {...u}
-                    deleteUser={deleteUser}
-                />)}
-            </ul>
+            <h5>User list:</h5>
+            <p>{usersList.map(User)}</p>
         </main>
     )
 }
@@ -49,5 +40,7 @@ function UsersList() {
 ReactDOM.render(
     <UsersList/>, document.getElementById('root')
 );
-// В типе UserPropsType у функции deleteUser в параметрах указан тип "any".
-// Какой тип было бы указать правильнее?
+// Что надо написать вместо XXX, чтобы код работал?
+// ❗ Если мы отмапим массив, то должны увидеть данные пользователей
+// ❗ Ответ дать минимально возможным объёмом кода
+
