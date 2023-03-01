@@ -1,46 +1,48 @@
-import React, {useState} from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-type UserType = {
-    id: number
-    name: string
-    age: number
-}
+function LongCommentChecker() {
+    const minSizeComment = 5
+    const [isCommentReady, setIsCommentReady] = useState<boolean>(false)
+    const [comment, setComment] = useState<string>('')
 
-function User(props: UserType) {
-    return (
-        <li>User {props.name}: {props.age} y.o.</li>
-    )
-}
+    const onClickSendComment = () => {
+        if (comment.length > minSizeComment) {
+            setComment('')
+        }
+    }
+    const onChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        const newComment = e.currentTarget.value
+        if (newComment.length > minSizeComment) {
+            setIsCommentReady(true)
+        } else {
+            setIsCommentReady(false)
+        }
+        setComment(newComment)
+    }
 
-function UsersList() {
-    const state = [
-        {id: 1, name: "Bob", age: 34},
-        {id: 2, name: "Alex", age: 25},
-        {id: 3, name: "Ann", age: 30},
-        {id: 4, name: "John", age: 23},
-    ]
-    const users = [
-        {id: 1, userName: "Bob", age: 34},
-        {id: 2, userName: "Alex", age: 25},
-        {id: 3, userName: "Ann", age: 30},
-        {id: 4, userName: "John", age: 23},
-    ]
-
-    const [usersList, setUsersList] = useState<Array<UserType>>(state)
     return (
         <main>
-            <h5>User list:</h5>
-            <p>{usersList.map(User)}</p>
+            <textarea
+                placeholder={'Your comment must have more than 5 charters'}
+                value={comment}
+                onChange={onChangeHandler}
+            />
+            <div>
+                <button
+                    disabled={!isCommentReady}
+                    onClick={onClickSendComment}>
+                    Send comment
+                </button>
+            </div>
         </main>
     )
 }
 
-ReactDOM.render(
-    <UsersList/>, document.getElementById('root')
-);
-// Что надо написать вместо XXX, чтобы код работал?
-// ❗ Если мы отмапим массив, то должны увидеть данные пользователей
-// ❗ Ответ дать минимально возможным объёмом кода
+ReactDOM.render(<LongCommentChecker/>, document.getElementById('root'));
 
+// Что нужно написать вместо XXX, чтобы кнопка отправки комментария отрабатывала верно:
+// первоначально кнопка должна быть в состоянии disable, а после успешного выполнения условия
+// (комментарий должен быть больше 5 символов) должна раздизаблиться.
+// ❗ Ответ необходимо дать на основании данных (переменных), которые уже есть в коде
