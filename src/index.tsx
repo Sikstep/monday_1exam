@@ -1,48 +1,40 @@
-import React, { ChangeEvent, useState } from 'react';
+
+import React, {ChangeEvent, useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function LongCommentChecker() {
-    const minSizeComment = 5
-    const [isCommentReady, setIsCommentReady] = useState<boolean>(false)
-    const [comment, setComment] = useState<string>('')
+function Colorize() {
 
-    const onClickSendComment = () => {
-        if (comment.length > minSizeComment) {
-            setComment('')
-        }
+    const [color, setColor] = useState<string>("black")
+    const colors = ["red", "yellow", "green", "blue", "violet", "chartreuse"]
+
+    const styles = {
+        width: "100px",
+        height: "100px",
+        borderRadius: "50%",
+        backgroundColor: "black"
     }
-    const onChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        const newComment = e.currentTarget.value
-        if (newComment.length > minSizeComment) {
-            setIsCommentReady(true)
-        } else {
-            setIsCommentReady(false)
-        }
-        setComment(newComment)
+
+    const getColor = (colors: string[]) => {
+        const nextColor = colors[Math.floor(Math.random() * colors.length)]
+        return nextColor
     }
 
     return (
         <main>
-            <textarea
-                placeholder={'Your comment must have more than 5 charters'}
-                value={comment}
-                onChange={onChangeHandler}
-            />
+            <div style={{...styles, backgroundColor: color}}/>
             <div>
                 <button
-                    disabled={!isCommentReady}
-                    onClick={onClickSendComment}>
-                    Send comment
+                    onClick={() => setColor(getColor(colors))}
+                >
+                    Get random color
                 </button>
             </div>
         </main>
     )
 }
 
-ReactDOM.render(<LongCommentChecker/>, document.getElementById('root'));
-
-// Что нужно написать вместо XXX, чтобы кнопка отправки комментария отрабатывала верно:
-// первоначально кнопка должна быть в состоянии disable, а после успешного выполнения условия
-// (комментарий должен быть больше 5 символов) должна раздизаблиться.
-// ❗ Ответ необходимо дать на основании данных (переменных), которые уже есть в коде
+ReactDOM.render(
+    <Colorize/>, document.getElementById('root')
+);
+// Что надо вставить вместо XXX, чтобы круг менял цвет по клику?
