@@ -1,40 +1,62 @@
+import React, {useState} from "react";
 
-import React, {ChangeEvent, useState} from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-
-function Colorize() {
-
-    const [color, setColor] = useState<string>("black")
-    const colors = ["red", "yellow", "green", "blue", "violet", "chartreuse"]
-
-    const styles = {
-        width: "100px",
-        height: "100px",
-        borderRadius: "50%",
-        backgroundColor: "black"
-    }
-
-    const getColor = (colors: string[]) => {
-        const nextColor = colors[Math.floor(Math.random() * colors.length)]
-        return nextColor
-    }
-
-    return (
-        <main>
-            <div style={{...styles, backgroundColor: color}}/>
-            <div>
-                <button
-                    onClick={() => setColor(getColor(colors))}
-                >
-                    Get random color
-                </button>
-            </div>
-        </main>
-    )
+type samuraiType = {
+    id: string
+    name: string
+    status: "online" | "offline"
+}
+type CourseNameType = "HTML"|"JS"|"React"|"Redux"|"HomeWorks"
+type CourseType = {
+    name: CourseNameType
+    mentor: string
+    isDone: boolean
+}
+type TechnologiesType = {
+    [userID: string]: Array<CourseType>
 }
 
-ReactDOM.render(
-    <Colorize/>, document.getElementById('root')
-);
-// Что надо вставить вместо XXX, чтобы круг менял цвет по клику?
+const samuraiID_1 = "64jf-87kg"
+const samuraiID_2 = "90lg-34ks"
+const samuraiID_3 = "12jm-05fd"
+
+export const samurai: Array<samuraiType> = [
+    {id: samuraiID_1, name: "Bob", status: "online"},
+    {id: samuraiID_2, name: "Alex", status: "offline"},
+    {id: samuraiID_3, name: "Ann", status: "offline"},
+]
+
+export const technologies: TechnologiesType = {
+    [samuraiID_1]: [
+        {name: "HTML", mentor: "Svetlana", isDone: true},
+        {name: "JS", mentor: "Viktor", isDone: true},
+        {name: "React", mentor: "Dmitrij", isDone: false},
+        {name: "Redux", mentor: "Valera", isDone: false},
+        {name: "HomeWorks", mentor: "Ignat", isDone: true},
+    ],
+    [samuraiID_2]: [
+        {name: "HTML", mentor: "Svetlana", isDone: true},
+        {name: "JS", mentor: "Viktor", isDone: true},
+        {name: "React", mentor: "Dmitrij", isDone: true},
+        {name: "Redux", mentor: "Valera", isDone: false},
+        {name: "HomeWorks", mentor: "Ignat", isDone: true},
+    ],
+    [samuraiID_3]: [
+        {name: "HTML", mentor: "Svetlana", isDone: true},
+        {name: "JS", mentor: "Viktor", isDone: true},
+        {name: "React", mentor: "Dmitrij", isDone: false},
+        {name: "Redux", mentor: "Valera", isDone: false},
+        {name: "HomeWorks", mentor: "Ignat", isDone: false},
+    ],
+}
+console.log(technologies[samuraiID_3][2].name)
+export const updateCourseStatus = (samuraiID: string, name: CourseNameType, isDone: boolean) => {
+    return {...technologies,
+        [samuraiID]: technologies[samuraiID].map(c => c.name === name ? {...c, isDone} : c)
+    }
+}
+// console.log(updateCourseStatus('64jf-87kg', 'HTML', false))
+// Дан список самураев из инкубатора и структура, хранящая данные о курсах,
+// которые самурай уже прошёл, а так же о тех курсах, которые ему ещё предстоит пройти.
+// Так же дана функция updateCourseStatus,
+// которая позволяет отметить курс как пройденный самураем или снять такую отметку
+// Что надо написать вместо XXX, чтобы функция работала?
