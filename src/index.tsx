@@ -48,13 +48,14 @@ export const technologies: TechnologiesType = {
         {name: "HomeWorks", mentor: "Ignat", isDone: false},
     ],
 }
-console.log(technologies[samuraiID_3][2].name)
+
 export const updateCourseStatus = (samuraiID: string, name: CourseNameType, isDone: boolean) => {
     return {...technologies,
         [samuraiID]: technologies[samuraiID].map(c => c.name === name ? {...c, isDone} : c)
     }
 }
-// console.log(updateCourseStatus('64jf-87kg', 'HTML', false))
+
+
 // Дан список самураев из инкубатора и структура, хранящая данные о курсах,
 // которые самурай уже прошёл, а так же о тех курсах, которые ему ещё предстоит пройти.
 // Так же дана функция updateCourseStatus,
