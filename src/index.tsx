@@ -51,13 +51,11 @@ export const technologies: TechnologiesType = {
 
 export const updateCourseStatus = (samuraiID: string, name: CourseNameType, isDone: boolean) => {
     return {...technologies,
-        [samuraiID]: technologies[samuraiID].map(c => c.name === name ? {...c, isDone} : c)
+        [samuraiID]: technologies[xxx].map(c => c.name === name ? {...c, isDone} : c)
     }
 }
-
-
 // Дан список самураев из инкубатора и структура, хранящая данные о курсах,
 // которые самурай уже прошёл, а так же о тех курсах, которые ему ещё предстоит пройти.
 // Так же дана функция updateCourseStatus,
 // которая позволяет отметить курс как пройденный самураем или снять такую отметку
-// Что надо написать вместо XXX, чтобы функция работала?
+// Что надо написать вместо ххх, чтобы функция работала корректно?
