@@ -6,9 +6,9 @@ type UserType = {
 }
 
 type ChangeUserPasswordTypeAT = {
-    type: 'CHANGE-USER-PASSWORD'
+    type: "CHANGE-USER-PASSWORD"
     payload: {
-        id: number
+        id: number,
         newPassword: string
     }
 }
@@ -16,7 +16,7 @@ type ChangeUserPasswordTypeAT = {
 export const userReducer =
     (state: UserType[], action: ChangeUserPasswordTypeAT): UserType[] => {
         switch (action.type) {
-            case 'CHANGE-USER-PASSWORD':
+            case "CHANGE-USER-PASSWORD":
                 return state.map(u =>
                     u.id === action.payload.id
                         ? {...u, password: action.payload.newPassword}
