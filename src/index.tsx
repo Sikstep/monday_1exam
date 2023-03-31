@@ -1,30 +1,35 @@
-type UserType = {
-    id: number
-    userName: string
-    email: string
-    password: string
+type StateType = {
+    volume: number // in percents
+    trackUrl: string // 'https://blabla.com/track01.mp3',
+    currentPlayPosition: number // milliseconds,
 }
 
-type ChangeUserPasswordTypeAT = {
-    type: "CHANGE-USER-PASSWORD"
-    payload: {
-        id: number,
-        newPassword: string
+export const reducer = (state: StateType, action: any) => {
+    switch (action.type) {
+        case 'TRACK-URL-CHANGED':
+            return {
+                ...state,
+                trackUrl: action.url
+            }
+        case 'TRACK-MUTED':
+            return {
+                ...state,
+                volume: 0
+            }
+        case 'TRACK-REWOUND-TO-START':
+            return {
+                ...state,
+                currentPlayPosition: 0
+            }
+        default:
+            return state
     }
 }
 
-export const userReducer =
-    (state: UserType[], action: ChangeUserPasswordTypeAT): UserType[] => {
-        switch (action.type) {
-            case "CHANGE-USER-PASSWORD":
-                return state.map(u =>
-                    u.id === action.payload.id
-                        ? {...u, password: action.payload.newPassword}
-                        : u)
-            default:
-                return state
-        }
-    }
+const muteTrackAC = () => ({type: 'TRACK-MUTED'})
+const changeTrackAC = (url: string) => ({type: 'TRACK-URL-CHANGED', url})
+// перемотатьНаНачало:
+const rewindToStart = () => ({type: 'TRACK-REWOUND-TO-START'})
 
-//Какой код должен быть написан вместо XXX и YYY в типе //ChangeUserPasswordTypeAT, что бы редьюсер работал?
-//В ответе напишите через пробел: XXX  YYY
+// Какие типы должны быть вместо XXX, YYY и ZZZ?
+// Ответ дать через пробел, например:   'BLABLA' 'HEYНЕY' 'HIPHOP'
