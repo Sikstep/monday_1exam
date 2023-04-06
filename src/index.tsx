@@ -1,75 +1,65 @@
-import {createStore} from 'redux'
-import ReactDOM from 'react-dom'
-import {Provider, useSelector, useDispatch} from 'react-redux'
 import React from 'react'
+import { createStore } from 'redux'
+import { Provider, useSelector, useDispatch } from 'react-redux'
+import ReactDOM from 'react-dom'
 
-const students = {
-    students: [
-        {id: 1, name: 'Bob'},
-        {id: 2, name: 'Alex'},
-        {id: 3, name: 'Donald'},
-        {id: 4, name: 'Ann'},
-    ]
+type StudentType = {
+    id: number
+    name: string
+    age: number
 }
-type RemoveStudentAT = {
-    type: "REMOVE-STUDENT"
+
+const initState = {
+    students:
+        [
+            {id: 1, name: 'Bob', age: 23},
+            {id: 2, name: 'Alex', age: 22}
+        ] as Array<StudentType>
+}
+type AddStudentAT = {
+    type: 'ADD-STUDENT'
+    name: string
+    age: number
     id: number
 }
-const RemoveStudentAC = (id: number): RemoveStudentAT => ({
-    type: "REMOVE-STUDENT",
-    id
-})
 
-const studentsReducer = (state = students, action: RemoveStudentAT) => {
+type InitialStateType = typeof initState
+
+const studentsReducer = (state: InitialStateType = initState, action: AddStudentAT): InitialStateType => {
     switch (action.type) {
-        case "REMOVE-STUDENT":
+        case 'ADD-STUDENT':
             return {
                 ...state,
-                students: state.students.filter(s => s.id !== action.id)
+                students: [...state.students, {
+                    name: action.name,
+                    age: action.age,
+                    id: action.id
+                }]
             }
     }
     return state
 }
 
-const store = createStore(studentsReducer)
+const appStore = createStore(studentsReducer)
 type RootStateType = ReturnType<typeof studentsReducer>
 
 
 const StudentList = () => {
-    const listItemStyles = {
-        width: "100px",
-        borderBottom: "1px solid gray",
-        cursor: "pointer",
-    }
     const students = useSelector((state: RootStateType) => state.students)
-    const dispatch = useDispatch()
-    const studentsList = students.map(s => {
-        const removeStudent = () => {
-            dispatch(RemoveStudentAC(s.id))
-        }
-        return (
-            <li key={s.id}
-                style={listItemStyles}
-                onClick={removeStudent}>
-                {s.name}
-            </li>)
-    })
     return (
-        <ol>
-            {studentsList}
-        </ol>
-
+        <ul>
+            {students.map(s => <li key={s.id}>{`${s.name}. ${s.age} years.`}</li>)}
+        </ul>
     )
 }
-
+const App = () => {
+    return <StudentList/>
+}
 
 ReactDOM.render(<div>
-        <Provider store={store}>
-            <StudentList/>
+        <Provider store={appStore}>
+            <App/>
         </Provider>
     </div>,
     document.getElementById('root')
 )
-
-// Что нужно написать вместо XXX, YYY и ZZZ, чтобы при клике по имени студент
-// удалялся из списка? Напишите через пробел.
