@@ -10,9 +10,10 @@ const store = createStore(combineReducers({
 }))
 
 store.subscribe(() => {
-    console.log('state changed')
+    const state = store.getState()
+    console.log(state)
 })
 
 store.dispatch({type: 'ANY'})
 
-// Что нужно написать вместо XXX, чтобы в консоли увидеть 'state changed'?
+//Что нужно написать вместо XXX, чтобы получить актуальный стейт?
