@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
 export const App = () => {
@@ -6,7 +6,7 @@ export const App = () => {
     const [seconds, setSeconds] = useState(100)
 
     const increaseSeconds = () => setSeconds(seconds + 10)
-    const increaseTemp = useCallback(() => setTemp(prev => prev + 1),[])
+    const increaseTemp = XXX
 
     return <>
         <TempDisplay temp={temp} increaseTemp={increaseTemp}/>
