@@ -1,75 +1,137 @@
-import {createStore} from 'redux'
-import ReactDOM from 'react-dom'
-import {Provider, useSelector, useDispatch} from 'react-redux'
-import React from 'react'
+import React, {useEffect} from 'react';
+import ReactDOM from 'react-dom/client';
+import {ThunkAction, ThunkDispatch} from 'redux-thunk';
+import {Provider, TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
+import axios from 'axios';
+import {combineReducers, configureStore} from '@reduxjs/toolkit';
 
-const students = {
-    students: [
-        {id: 1, name: 'Bob'},
-        {id: 2, name: 'Alex'},
-        {id: 3, name: 'Donald'},
-        {id: 4, name: 'Ann'},
-    ]
-}
-type RemoveStudentAT = {
-    type: "REMOVE-STUDENT"
-    id: number
-}
-const RemoveStudentAC = (id: number): RemoveStudentAT => ({
-    type: "REMOVE-STUDENT",
-    id
-})
+// Types
+type PostType = {
+    body: string;
+    id: string;
+    title: string;
+    userId: string;
+};
 
-const studentsReducer = (state = students, action: RemoveStudentAT) => {
+type PayloadType = {
+    title: string;
+    body?: string;
+};
+
+// Api
+const instance = axios.create({ baseURL: "https://exams-frontend.kimitsu.it-incubator.io/api/" });
+
+const postsAPI = {
+    getPosts() {
+        return instance.get<PostType[]>("posts");
+    },
+    updatePostTitle(postId: string, post: PayloadType) {
+        return instance.put<PostType>(`posts/${postId}`, post);
+    },
+};
+
+// Reducer
+const initState = [] as PostType[];
+
+type InitStateType = typeof initState;
+
+const postsReducer = (state: InitStateType = initState, action: ActionsType): InitStateType => {
     switch (action.type) {
-        case "REMOVE-STUDENT":
-            return {
-                ...state,
-                students: state.students.filter(s => s.id !== action.id)
+        case "POSTS/GET-POSTS":
+            return action.posts;
+
+        case "POSTS/UPDATE-POST-TITLE":
+            return state.map((p) => {
+                if (p.id === action.post.id) {
+                    return { ...p, title: action.post.title };
+                } else {
+                    return p;
+                }
+            });
+
+        default:
+            return state;
+    }
+};
+
+const getPostsAC = (posts: PostType[]) => ({ type: "POSTS/GET-POSTS", posts }) as const;
+const updatePostTitleAC = (post: PostType) => ({ type: "POSTS/UPDATE-POST-TITLE", post }) as const;
+type ActionsType = ReturnType<typeof getPostsAC> | ReturnType<typeof updatePostTitleAC>;
+
+const getPostsTC = (): AppThunk => (dispatch) => {
+    postsAPI.getPosts().then((res) => {
+        dispatch(getPostsAC(res.data));
+    });
+};
+
+const updatePostTC =
+    (postId: string): AppThunk =>
+        (dispatch, getState: any) => {
+            try {
+
+                const currentPost = getState().posts.find((p: PostType) => p.id === postId);
+
+                if (currentPost) {
+                    const payload = { title: "Это просто заглушка. Backend сам сгенерирует новый title" };
+                    postsAPI.updatePostTitle(postId, payload).then((res) => {
+                        dispatch(updatePostTitleAC(res.data));
+                    });
+                }
+            } catch (e) {
+                alert("Обновить пост не удалось 😢");
             }
-    }
-    return state
-}
+        };
 
-const store = createStore(studentsReducer)
-type RootStateType = ReturnType<typeof studentsReducer>
+// Store
+const rootReducer = combineReducers({
+    posts: postsReducer,
+});
 
+const store = configureStore({ reducer: rootReducer });
+type RootState = ReturnType<typeof store.getState>;
+type AppDispatch = ThunkDispatch<RootState, unknown, ActionsType>;
+type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, ActionsType>;
+const useAppDispatch = () => useDispatch<AppDispatch>();
+const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-const StudentList = () => {
-    const listItemStyles = {
-        width: "100px",
-        borderBottom: "1px solid gray",
-        cursor: "pointer",
-    }
-    const students = useSelector((state: RootStateType) => state.students)
-    const dispatch = useDispatch()
-    const studentsList = students.map(s => {
-        const removeStudent = () => {
-            dispatch(RemoveStudentAC(s.id))
-        }
-        return (
-            <li key={s.id}
-                style={listItemStyles}
-                onClick={removeStudent}>
-                {s.name}
-            </li>)
-    })
+// App
+const App = () => {
+    const dispatch = useAppDispatch();
+    const posts = useAppSelector((state) => state.posts);
+
+    useEffect(() => {
+        dispatch(getPostsTC());
+    }, []);
+
+    const updatePostHandler = (postId: string) => {
+        dispatch(updatePostTC(postId));
+    };
+
     return (
-        <ol>
-            {studentsList}
-        </ol>
+        <>
+            <h1>📜 Список постов</h1>
+            {posts.map((p) => {
+                return (
+                    <div key={p.id}>
+                        <b>title</b>: {p.title}
+                        <button onClick={() => updatePostHandler(p.id)}>Обновить пост</button>
+                    </div>
+                );
+            })}
+        </>
+    );
+};
 
-    )
-}
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+root.render(
+    <Provider store={store}>
+        <App />
+    </Provider>,
+);
 
+// 📜 Описание:
+// Попробуйте обновить пост и вы увидите alert с ошибкой.
+// Debugger / network / console.log вам в помощь
+// Найдите ошибку и вставьте исправленную строку кода в качестве ответа.
 
-ReactDOM.render(<div>
-        <Provider store={store}>
-            <StudentList/>
-        </Provider>
-    </div>,
-    document.getElementById('root')
-)
-
-// Что нужно написать вместо XXX, YYY и ZZZ, чтобы при клике по имени студент
-// удалялся из списка? Напишите через пробел.
+// 🖥 Пример ответа: const payload = {...currentPost, tile: 'Летим 🚀'}
